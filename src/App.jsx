@@ -33,7 +33,7 @@ export default function App() {
         type="number"
         onChange={(e) => setNumber(e.target.value)}
       ></Input>
-      <p>{number}</p>
+
       <Random fact={fact}></Random>
     </div>
   );
