@@ -8,6 +8,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+import Country from "./Country";
 
 export default function App() {
   const [fact, setFact] = useState({});
@@ -26,6 +35,8 @@ export default function App() {
     "pink",
     "orange",
   ]);
+
+  const [region, setRegion] = useState("Europe");
 
   async function getRandomFact() {
     const response = await fetch("http://numbersapi.com/random?json");
@@ -59,27 +70,36 @@ export default function App() {
   return (
     <div className="container">
       <h1 className="p-6 text-xl">My Numbers and Countries</h1>
+      <h2 className="p-3 text-xl">Region: {region}</h2>
 
-      <Select>
+      <Select onValueChange={(value) => setRegion(value)}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select a region" />
         </SelectTrigger>
+
         <SelectContent>
           <SelectItem value="Europe">Europe</SelectItem>
           <SelectItem value="Asia">Asia</SelectItem>
           <SelectItem value="Africa">Africa</SelectItem>
-          <SelectItem value="North America">North America</SelectItem>
-          <SelectItem value="South America">South America</SelectItem>
+          <SelectItem value="Americas">Americas</SelectItem>
           <SelectItem value="Oceania">Oceania</SelectItem>
         </SelectContent>
       </Select>
 
-      {countries
-        //.filter((country) => country.length <= 5) //izpisemo le drzave, ki imajo 5 ali manj crk
-        .filter((country) => country.region == "Europe")
-        .map((country) => (
-          <p>{country.name.common}</p>
-        ))}
+      <Carousel>
+        <CarouselContent>
+          {countries
+            //.filter((country) => country.length <= 5) //izpisemo le drzave, ki imajo 5 ali manj crk
+            .filter((country) => country.region == region)
+            .map((country) => (
+              <CarouselItem className="basis-1/3">
+                <Country data={country}></Country>
+              </CarouselItem>
+            ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
 
       {colors.map((color) => (
         <p>{color}</p>
