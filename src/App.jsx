@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 import Random from "./Random";
 import { Input } from "./components/ui/input";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -16,7 +24,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
+import { Checkbox } from "@/components/ui/checkbox";
+
 import Country from "./Country";
+import Vaja from "./Vaja";
 
 export default function App() {
   const [fact, setFact] = useState({});
@@ -38,6 +49,8 @@ export default function App() {
 
   const [region, setRegion] = useState("Europe");
 
+  const [landlocked, setLandlocked] = useState(true);
+
   async function getRandomFact() {
     const response = await fetch("http://numbersapi.com/random?json");
     const data = await response.json();
@@ -52,7 +65,7 @@ export default function App() {
 
   async function getCountries() {
     const response = await fetch(
-      "https://restcountries.com/v3.1/all?fields=name,flag,borders,region",
+      "https://restcountries.com/v3.1/all?fields=name,flag,borders,flags,region,landlocked",
     );
     const data = await response.json();
     setCountries(data);
@@ -69,30 +82,59 @@ export default function App() {
 
   return (
     <div className="container">
+      <Vaja></Vaja>
       <h1 className="p-6 text-xl">My Numbers and Countries</h1>
       <h2 className="p-3 text-xl">Region: {region}</h2>
 
-      <Select onValueChange={(value) => setRegion(value)}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select a region" />
-        </SelectTrigger>
+      <div className="grid grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Region</CardTitle>
+            <CardDescription>
+              Here you can select what region your country is in.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select onValueChange={(value) => setRegion(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a region" />
+              </SelectTrigger>
 
-        <SelectContent>
-          <SelectItem value="Europe">Europe</SelectItem>
-          <SelectItem value="Asia">Asia</SelectItem>
-          <SelectItem value="Africa">Africa</SelectItem>
-          <SelectItem value="Americas">Americas</SelectItem>
-          <SelectItem value="Oceania">Oceania</SelectItem>
-        </SelectContent>
-      </Select>
+              <SelectContent>
+                <SelectItem value="All">All regions</SelectItem>
+                <SelectItem value="Europe">Europe</SelectItem>
+                <SelectItem value="Asia">Asia</SelectItem>
+                <SelectItem value="Africa">Africa</SelectItem>
+                <SelectItem value="Americas">Americas</SelectItem>
+                <SelectItem value="Oceania">Oceania</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Landlock</CardTitle>
+            <CardDescription>
+              Does your country have access to the sea or is it landlocked?
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p></p>
+            <Checkbox
+              onCheckedChange={(value) => setLandlocked(value)}
+            ></Checkbox>
+          </CardContent>
+        </Card>
+      </div>
 
       <Carousel>
         <CarouselContent>
           {countries
             //.filter((country) => country.length <= 5) //izpisemo le drzave, ki imajo 5 ali manj crk
-            .filter((country) => country.region == region)
+            .filter((country) => region == "All" || country.region == region)
+            .filter((country) => landlocked == country.landlocked)
             .map((country) => (
-              <CarouselItem className="basis-1/3">
+              <CarouselItem className="basis-1/4">
                 <Country data={country}></Country>
               </CarouselItem>
             ))}

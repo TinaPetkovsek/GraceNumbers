@@ -10,12 +10,17 @@ import {
 //return Card!!!
 
 export default function Country(props) {
-  const { name, flag } = props.data;
+  const { name, flag, flags } = props.data;
   return (
-    <div>
-      <p>
-        {flag} {name.common}
-      </p>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {flag} {name.common}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <img src={flags.png}></img>
+      </CardContent>
+    </Card>
   );
 }
